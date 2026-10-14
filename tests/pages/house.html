@@ -1,0 +1,38 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000;overflow:hidden}</style></head>
+<body><canvas id="c"></canvas>
+<script type="module">
+import * as THREE from 'three';
+import { configureTextures } from '/src/render/textures.js';
+import { CollisionWorld } from '/src/world/collision.js';
+import { buildHouse } from '/src/world/builder.js';
+import { furnish } from '/src/world/furnish.js';
+import { createRenderer } from '/src/render/renderer.js';
+import { LightManager } from '/src/render/lights.js';
+import { QUALITY } from '/src/core/settings.js';
+import { mergeStatic } from '/src/render/optimize.js';
+const q = QUALITY.medium;
+configureTextures(256, 4);
+const renderer = createRenderer(document.getElementById('c'), q);
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, innerWidth/innerHeight, 0.05, 100);
+const world = new CollisionWorld();
+const t0 = performance.now(); console.log('start build');
+const house = buildHouse(scene, world);
+const content = furnish(house.levels, world);
+const lm = new LightManager(scene, content.lights, q);
+const mr = {}; for (const k in house.levels) mr[k] = mergeStatic(house.levels[k]);
+lm.setPower(true);
+window.__info = { mr, build: performance.now()-t0, boxes: world.boxes.length, regions: world.regions.length, doors: house.doors.length, lights: content.lights.length, inter: content.interactables.length, hides: content.hides.length, meshes: 0 };
+scene.traverse(o=>{ if(o.isMesh) window.__info.meshes++; });
+const amb = new THREE.AmbientLight(0xffffff, 0);
+scene.add(amb);
+window.view = (x,y,z,yaw,pitch,ambient=0, power=true) => {
+  camera.position.set(x,y,z); camera.rotation.order='YXZ'; camera.rotation.set(pitch,yaw,0);
+  amb.intensity = ambient; lm.setPower(power);
+  for (const k in house.levels) house.levels[k].visible = true;
+  for (let i=0;i<3;i++) lm.update(0.3, camera.position, y<-0.2?'B':y<2.9?'G':y<5.9?'U':'A');
+  renderer.render(scene, camera);
+  return renderer.info.render.calls;
+};
+window.__ready = true;
+</script></body></html>

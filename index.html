@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SuperEssence — The Doll</title>
+  <link rel="icon" href="data:," />
+  <link rel="stylesheet" href="./src/style.css" />
+</head>
+<body>
+  <canvas id="game"></canvas>
+
+  <!-- HUD -->
+  <div id="hud" class="hidden">
+    <div id="crosshair"></div>
+    <div id="prompt"></div>
+    <div id="subs"></div>
+    <div id="toast"></div>
+    <div id="objective"></div>
+    <div id="actcard"><div class="act-title"></div><div class="act-sub"></div></div>
+    <div id="status">
+      <div id="bleed" title="Saignement">🩸</div>
+      <div id="battery"><div class="cell"><div class="fill"></div></div></div>
+    </div>
+    <div id="stamina"><div class="fill"></div></div>
+    <div id="breath"><div class="fill"></div><span>Souffle retenu</span></div>
+    <div id="progress"><div class="label"></div><div class="bar"><div class="fill"></div></div></div>
+    <div id="hidehint"></div>
+    <div id="debug"></div>
+  </div>
+
+  <!-- Overlays -->
+  <div id="loading" class="screen">
+    <img src="./logo.jpg" alt="SuperEssence" class="logo" />
+    <div class="sub">THE DOLL</div>
+    <div id="loadtext">Chargement…</div>
+  </div>
+
+  <div id="menu" class="screen hidden">
+    <img src="./logo.jpg" alt="SuperEssence" class="logo" />
+    <div class="sub">THE DOLL</div>
+    <div class="buttons" id="mainbuttons">
+      <button data-act="new">Nouvelle partie</button>
+      <button data-act="continue" id="btn-continue">Continuer</button>
+      <button data-act="options">Options</button>
+      <button data-act="controls">Commandes</button>
+    </div>
+    <div class="buttons hidden" id="diffbuttons">
+      <div class="label">Difficulté</div>
+      <button data-diff="easy">Facile <small>— elle est plus lente et moins attentive</small></button>
+      <button data-diff="normal">Normal <small>— l'expérience prévue</small></button>
+      <button data-diff="nightmare">Cauchemar <small>— elle entend tout, fouille tout</small></button>
+      <button data-act="back">Retour</button>
+    </div>
+    <div class="foot">Casque recommandé. Le son est ta meilleure arme.</div>
+  </div>
+
+  <div id="pause" class="screen hidden">
+    <div class="title">PAUSE</div>
+    <div class="buttons">
+      <button data-act="resume">Reprendre</button>
+      <button data-act="save">Sauvegarder</button>
+      <button data-act="load">Charger</button>
+      <button data-act="options">Options</button>
+      <button data-act="controls">Commandes</button>
+      <button data-act="quit">Menu principal</button>
+    </div>
+    <div class="note" id="pausenote"></div>
+  </div>
+
+  <div id="options" class="screen panel hidden">
+    <div class="title">OPTIONS</div>
+    <div class="grid" id="optgrid"></div>
+    <div class="buttons row"><button data-act="reset">Réinitialiser</button><button data-act="close">Fermer</button></div>
+  </div>
+
+  <div id="controls" class="screen panel hidden">
+    <div class="title">COMMANDES</div>
+    <div class="grid" id="ctrlgrid"></div>
+    <div class="note">Clique sur une touche puis appuie sur la nouvelle touche. Échap : pause.</div>
+    <div class="buttons row"><button data-act="close">Fermer</button></div>
+  </div>
+
+  <div id="inventory" class="screen panel hidden">
+    <div class="title">INVENTAIRE</div>
+    <div id="invgrid"></div>
+    <div id="invdesc"></div>
+    <div class="vitals" id="vitals"></div>
+    <div class="buttons row"><button data-act="close">Fermer [Tab]</button></div>
+  </div>
+
+  <div id="journal" class="screen panel hidden">
+    <div class="title">JOURNAL</div>
+    <div class="tabs"><button data-tab="obj">Objectifs</button><button data-tab="docs">Documents</button><button data-tab="clues">Indices</button></div>
+    <div id="jcontent"></div>
+    <div class="buttons row"><button data-act="close">Fermer [J]</button></div>
+  </div>
+
+  <div id="reader" class="screen hidden">
+    <div class="paper"><div class="ptitle"></div><div class="ptext"></div></div>
+    <div class="note">[E] ou clic pour fermer</div>
+  </div>
+
+  <div id="death" class="screen hidden">
+    <div class="title red">ELLE T'A EU</div>
+    <div class="note" id="deathcause"></div>
+    <div class="buttons"><button data-act="load">Charger la dernière sauvegarde</button><button data-act="quit">Menu principal</button></div>
+  </div>
+
+  <div id="ending" class="screen hidden">
+    <div class="title" id="endtitle"></div>
+    <div class="endtext" id="endtext"></div>
+    <div class="note" id="endstats"></div>
+    <div class="buttons"><button data-act="quit">Menu principal</button></div>
+  </div>
+
+  <div id="clicktoplay" class="hidden">Clique pour reprendre</div>
+  <div id="flash"></div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
