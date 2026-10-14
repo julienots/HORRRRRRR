@@ -420,7 +420,7 @@ function buildFloorsAndCeilings(levels, world) {
         m.updateMatrix();
         m.matrixAutoUpdate = false;
         // occluder above (also what's above an attic / roof)
-        world.addBox(x0, y + r.h + 0.005, z0, x1, y + r.h + 0.2, z1, { kind: 'slab', solid: false });
+        world.addBox(x0, y + r.h - 0.15, z0, x1, y + r.h - 0.006, z1, { kind: 'slab', solid: false });
         // a solid ceiling so nothing can stand inside the slab
       }
     }

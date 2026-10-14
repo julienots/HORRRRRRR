@@ -63,6 +63,7 @@ export class Game {
     configureTextures(q.tex, q.aniso);
     const canvas = document.getElementById('game');
     this.renderer = createRenderer(canvas, q);
+    this.renderer.info.autoReset = false;
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x000000);
     this.scene.fog = new THREE.FogExp2(0x050505, 0.045);
@@ -636,7 +637,7 @@ export class Game {
 
   timer(sec, fn) { (this._timers ||= []).push({ t: this.time + sec, fn }); }
 
-  consume(id) { inv(this, id, -1); }
+  consume(id) { addInv(this, id, -1); }
 
   useDoor(d) {
     const inv = this.inventory, f = this.flags;
@@ -722,7 +723,7 @@ export class Game {
       this.flags.flashlight = true;
       this.ui.toast('Lampe torche. [F] pour l\'allumer / l\'éteindre.', 4);
     } else {
-      inv(this, id, 1);
+      addInv(this, id, 1);
       this.ui.toast(`Ramassé : ${ITEMS[id].name}`, 2.5);
     }
     if (id === 'garageKey') this.setAct(3);
@@ -785,6 +786,7 @@ export class Game {
       // move the wardrobe's collision box
       const b = w.userData.box;
       if (b) { b.min[0] += 1.55; b.max[0] += 1.55; this.world.update(b, b.min, b.max); b.enabled = true; }
+      this.nav.rebuild();
     });
     this.ui.subtitle(SUBTITLES.secret, 3);
     this.updateObjective(true);
@@ -811,7 +813,7 @@ export class Game {
     const fl = e.light;
     if (inv.heart && inv.lighter) {
       this.startAction('Brûler le cœur…', 3, () => {
-        inv(this, 'heart', -1);
+        addInv(this, 'heart', -1);
         f.heartBurned = true;
         f.fire = true;
         fl.on = true;
@@ -858,7 +860,7 @@ export class Game {
       this.audio.bandage();
       this.noise(p.pos, 0.1, 'item');
       this.startAction('Bander la plaie… (reste immobile)', 3.2, () => {
-        inv(this, 'bandage', -1);
+        addInv(this, 'bandage', -1);
         p.injury.bleeding = false;
         p.health = Math.min(100, p.health + 30);
         p.injury.leg = Math.max(0.15, p.injury.leg - 0.25);
@@ -866,14 +868,14 @@ export class Game {
         this.ui.toast('Le saignement s\'est arrêté.');
       });
     } else if (id === 'painkillers') {
-      inv(this, 'painkillers', -1);
+      addInv(this, 'painkillers', -1);
       this.audio.pills();
       p.painRelief = 120;
       p.fear = Math.max(0, p.fear - 0.3);
       this.ui.toast('La douleur s\'estompe. Les mains tremblent moins.');
     } else if (id === 'battery') {
       if (!p.hasFlashlight) return;
-      inv(this, 'battery', -1);
+      addInv(this, 'battery', -1);
       p.battery = 100;
       this.audio.click();
       this.ui.toast('Piles neuves.');
@@ -934,7 +936,7 @@ export class Game {
   throwBottle() {
     const p = this.player;
     if (!this.inventory.bottle || p.hidden || p.locked) return;
-    inv(this, 'bottle', -1);
+    addInv(this, 'bottle', -1);
     const m = new THREE.Group();
     m.add(new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.22, 10), new THREE.MeshPhysicalMaterial({ color: 0x1f4a22, roughness: 0.05, transparent: true, opacity: 0.8 })));
     const dir = new THREE.Vector3(0, 0, -1).applyQuaternion(this.camera.quaternion);
@@ -1056,6 +1058,7 @@ export class Game {
       w.position.x += 1.55;
       const b = w.userData.box;
       if (b) { b.min[0] += 1.55; b.max[0] += 1.55; this.world.update(b, b.min, b.max); }
+      this.nav.rebuild();
       const mb = this.content.fixtures.musicBox;
       mb.part.lid.rotation.x = -1.2; mb.part.dancer.visible = true;
     }
@@ -1149,6 +1152,7 @@ export class Game {
       if (inp.hit('objectives')) this.updateObjective(true);
     }
     p.update(dt, inp);
+    this.camera.updateMatrixWorld();
     this.focus = p.hidden || p.locked ? null : this.findInteractable();
     this.ui.prompt(this.focus ? this.promptFor(this.focus) : '');
 
@@ -1317,18 +1321,31 @@ export class Game {
   // only render the player's floor and its neighbours; the mirror only when in the bathroom
   updateVisibility() {
     const order = ['B', 'G', 'U', 'A'];
-    const i = order.indexOf(this.player.level);
-    for (const [k, g] of Object.entries(this.house.levels)) {
-      const j = order.indexOf(k);
-      g.visible = Math.abs(i - j) <= 1;
-    }
-    const dl = order.indexOf(this.doll.level);
-    this.doll.root.visible = Math.abs(i - dl) <= 1;
+    const p = this.player.pos;
+    const lv = this.player.level;
+    // a neighbouring floor is only rendered when it can actually be seen: from the stairwells and the
+    // hall / gallery (which overlook each other through the grand staircase)
+    const near = (x, z, r) => Math.hypot(p.x - x, p.z - z) < r;
+    const show = new Set([lv]);
+    const inHallArea = p.x > 8.5 && p.x < 17.5 && p.z > 9.5 && p.z < 18.5;
+    const nearCellar = near(16, 5, 4.5);
+    if (lv === 'G') { if (inHallArea) show.add('U'); if (nearCellar) show.add('B'); }
+    if (lv === 'U') { if (inHallArea) show.add('G'); if (nearCellar) show.add('A'); }
+    if (lv === 'B') { if (nearCellar || (p.x > 14 && p.x < 18 && p.z > 0)) show.add('G'); }
+    if (lv === 'A') { if (near(16, 5, 5)) show.add('U'); }
+    // on the stairs themselves both floors are needed
+    if (p.x > 13.4 && p.x < 15.1 && p.z > 10.8 && p.z < 17.2) { show.add('G'); show.add('U'); }
+    if (p.x > 14.9 && p.x < 17.1 && p.z > 2.8 && p.z < 7.2) { if (p.y < 0.2) { show.add('B'); show.add('G'); } else { show.add('U'); show.add('A'); } }
+    for (const [k, g] of Object.entries(this.house.levels)) g.visible = show.has(k);
+    this.doll.root.visible = show.has(this.doll.level);
+    this.visibleLevels = show;
     this.content.fixtures.mirror.reflector.visible = this.playerRoom?.id === 'bath';
+    void order;
   }
 
   render() {
     if (this.state === 'loading') return;
+    this.renderer.info.reset();
     this.post.composer.render();
   }
 
@@ -1342,9 +1359,9 @@ Joueur: santé ${p.health.toFixed(0)}  endurance ${p.stamina.toFixed(0)}  peur $
   }
 }
 
-function inv(game, id, n) {
+function addInv(game, id, n) {
   game.inventory[id] = (game.inventory[id] || 0) + n;
   if (game.inventory[id] <= 0) delete game.inventory[id];
 }
 
-export { inv, saveSettings, readSave };
+export { addInv, saveSettings, readSave };

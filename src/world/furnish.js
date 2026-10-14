@@ -98,6 +98,7 @@ export function furnish(levels, world) {
   function pickup(itemId, roomId, x, y, z, parent = null, extra = {}) {
     const model = itemModel(extra.doc ? 'document' : itemId);
     model.userData.moving = true;
+    model.traverse((o) => { if (o.isMesh) o.castShadow = false; });
     const lv = roomById[roomId].level;
     if (parent) {
       parent.inner.add(model);
@@ -352,7 +353,7 @@ export function furnish(levels, world) {
     atWall(r, 'N', 18.2, F.bookshelf(1.2, 2.2, 0.35, 'woodBlack', 13));
     atWall(r, 'N', 19.5, F.bookshelf(1.2, 2.2, 0.35, 'woodBlack', 14));
     atWall(r, 'S', 22.5, F.dresser(1.4, 'woodBlack'));
-    put(r, F.armchair('fabricSofa'), 18.4, 9.6, PI * 0.8);
+    put(r, F.armchair('fabricSofa'), 19.4, 10.2, PI * 0.8);
     atWall(r, 'E', 9.8, F.painting(0.7, 0.9, 'portrait', 40), { y: 1.6, collide: false });
     for (let i = 0; i < 6; i++) { const p = itemModel('document'); p.position.set(18.5 + R() * 4, LEVELS.U, 6.5 + R() * 3); p.rotation.y = R() * 6; levels.U.add(p); }
     ceilingLamp(r, 20.5, 7);

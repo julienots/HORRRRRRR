@@ -41,6 +41,14 @@ export class NavGrid {
     return null;
   }
 
+  rebuild() {
+    this.nodes = [];
+    this.byRegionCell = new Map();
+    this.spatial = new Map();
+    this._g = this._f = this._came = this._stamp = this._closed = null;
+    this.build();
+  }
+
   build() {
     const w = this.world;
     for (const [ri, r] of w.regions.entries()) {

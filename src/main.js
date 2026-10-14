@@ -63,7 +63,7 @@ function makeTestAPI(g) {
     teleport(x, y, z, yaw = 0, pitch = 0) {
       const p = g.player;
       if (p.hidden) g.exitHide(true);
-      p.pos.set(x, y, z); p.yaw = yaw; p.pitch = pitch; p.vel.set(0, 0, 0); p.locked = false; p.wake = 0;
+      p.pos.set(x, y, z); p.yaw = yaw; p.pitch = pitch; p.vel.set(0, 0, 0); p.locked = false; p.wake = 0; p.knock = 0; p.eye = p.crouched ? 1.02 : 1.62;
       p.updateCamera(0.016, g.input, false, false);
     },
     look(yaw, pitch = 0) { g.player.yaw = yaw; g.player.pitch = pitch; },

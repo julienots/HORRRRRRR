@@ -46,12 +46,29 @@ function bucketMerge(meshes, space) {
   return out;
 }
 
+// Collapse the direct mesh children of `node` per material (used for the doll's bones).
+export function collapseChildren(node) {
+  node.updateMatrixWorld(true);
+  const meshes = node.children.filter((m) => m.isMesh && !m.userData.noMerge && !Array.isArray(m.material));
+  if (meshes.length < 2) return 0;
+  const merged = bucketMerge(meshes, node);
+  for (const m of meshes) node.remove(m);
+  for (const mm of merged) { mm.frustumCulled = false; node.add(mm); }
+  return meshes.length - merged.length;
+}
+
 export function mergeStatic(levelGroup) {
   levelGroup.updateMatrixWorld(true);
   const groups = new Map(); // root (or levelGroup) -> meshes
   levelGroup.traverse((m) => {
     if (!m.isMesh || m.isSkinnedMesh || m.isReflector || !m.visible || Array.isArray(m.material)) return;
     if (m.userData.noMerge || isRoot(m)) return;
+    // tiny parts (knobs, nails, books...) do not need to cast shadows
+    if (m.castShadow) {
+      if (!m.geometry.boundingSphere) m.geometry.computeBoundingSphere();
+      const s = m.geometry.boundingSphere.radius * Math.max(m.scale.x, m.scale.y, m.scale.z);
+      if (s < 0.06) m.castShadow = false;
+    }
     const root = ownerRoot(m, levelGroup) || levelGroup;
     if (!groups.has(root)) groups.set(root, []);
     groups.get(root).push(m);

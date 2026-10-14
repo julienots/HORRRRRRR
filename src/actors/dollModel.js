@@ -5,6 +5,7 @@
 import * as THREE from 'three';
 import { canvasTexture } from '../render/textures.js';
 import { rng, makeFbm } from '../core/math.js';
+import { collapseChildren } from '../render/optimize.js';
 
 const R = rng(666);
 
@@ -467,6 +468,9 @@ export function buildDoll() {
     attach('foot' + L, new THREE.BoxGeometry(0.05, 0.004, 0.012), shoeMat, 0, 0.004, 0.0); // strap
   }
 
+  // fewer draw calls: rigid parts of each bone are merged per material (eyes / mouth stay separate)
+  mouth.userData.noMerge = true;
+  for (const b of Object.values(bones)) collapseChildren(b);
   root.traverse((o) => { if (o.isMesh) o.frustumCulled = false; });
   // a skeleton object for the record (bones are what drives everything)
   const skeleton = new THREE.Skeleton(Object.values(bones));

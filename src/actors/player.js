@@ -70,7 +70,7 @@ export class Player {
     spot.shadow.bias = -0.0006;
     spot.shadow.normalBias = 0.02;
     spot.shadow.camera.near = 0.15;
-    spot.shadow.camera.far = 26;
+    spot.shadow.camera.far = 14;
     this.spot = spot;
     this.spotTarget = new THREE.Object3D();
     game.scene.add(spot, this.spotTarget);
