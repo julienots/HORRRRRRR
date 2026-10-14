@@ -144,7 +144,7 @@ export class Doll {
 
   // noise event from the world
   hear(pos, loud, kind) {
-    if (!this.active || this.state === 'dormant') return;
+    if (!this.active || this.state === 'dormant' || this.graceT > 0) return;
     const g = this.game;
     const d = pos.distanceTo(this.eye);
     const radius = loud * 22 * this.diff.hearing * (1 + this.aggro * 0.06);
@@ -371,7 +371,8 @@ export class Doll {
     this.seenByPlayer = g.isVisibleToPlayer(this.eye.clone().setY(this.pos.y + 0.6));
     this.unseenT = this.seenByPlayer ? 0 : this.unseenT + dt;
 
-    if (this.state !== 'dormant' && this.active) this.perceive(dt);
+    this.graceT = Math.max(0, (this.graceT || 0) - dt);
+    if (this.state !== 'dormant' && this.active && this.graceT <= 0) this.perceive(dt);
     this.think(dt);
     this.animate(dt);
     this.sounds(dt);

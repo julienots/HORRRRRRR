@@ -1243,6 +1243,7 @@ export class Game {
       d.active = true;
       d.aggro = this.diff.aggro;
       d.setState('retreat', 'réveil');
+      d.graceT = 25; // the first encounter is a presence, not a chase
       const far = this.nav.nodes.filter((n) => Math.abs(n.y - LEVELS.G) < 0.1 && Math.hypot(n.x - 4, n.z - 6) < 3);
       const n = far[Math.floor(Math.random() * far.length)];
       // she leaves through the gallery and the stairs (real path), faster while unseen

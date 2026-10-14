@@ -94,6 +94,17 @@ export class DollAnimator {
       b.hips.position.y = 0.5 + (pose._hipsY || 0);
       b.hips.position.z = pose._hipsZ || 0;
     }
+    // hair follows gravity: counter part of the head's world tilt (keeps the yaw)
+    const hp = this.m.hairPivot;
+    if (hp) {
+      const hw = new THREE.Quaternion();
+      b.head.getWorldQuaternion(hw);
+      const e = new THREE.Euler().setFromQuaternion(hw, 'YXZ');
+      const upright = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, e.y, 0, 'YXZ'));
+      const target = hw.clone().invert().multiply(upright); // local rotation that makes the hair hang straight
+      const blend = new THREE.Quaternion().slerp(target, 0.75);
+      hp.quaternion.slerp(blend, 1 - Math.exp(-10 * dt));
+    }
     // face (always smooth)
     this.jaw = damp(this.jaw, s.jaw, 10, dt);
     if (this.m.mouth) this.m.mouth.scale.y = 0.12 + this.jaw * 1.1;

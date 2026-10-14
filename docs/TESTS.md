@@ -31,7 +31,8 @@ Dernière exécution complète : **96 vérifications, 96 réussies, 0 échec, au
 - faisceau de la lampe dans les yeux → recul ;
 - goutte de sang dans son champ de vision → elle suit la piste ;
 - embuscade près d'un passage très fréquenté par le joueur ;
-- patrouille libre de 240 s : 19 pièces visitées sur les 4 niveaux, jamais bloquée, toujours sur une cellule marchable.
+- patrouille libre de 240 s : 19 à 21 pièces visitées selon les exécutions, sur les 4 niveaux, jamais bloquée,
+  toujours sur une cellule marchable.
 
 ## `tests/t-story.mjs` — progression, survie, sauvegardes (32/32)
 - Acte I → II : la poupée assise tourne la tête quand on la regarde, puis disparaît quand on détourne les yeux ;
@@ -46,7 +47,7 @@ Dernière exécution complète : **96 vérifications, 96 réussies, 0 échec, au
 - mort : jumpscare puis écran de mort ;
 - saignement (perte de PV + gouttes), bandage, boiterie (vitesse 1,06 contre 1,60 m/s), endurance, analgésiques,
   piles, souffle retenu puis souffle coupé (bruit) ;
-- metteur en scène : 14 événements exécutés sans erreur, 13 déclenchés dans leur contexte ;
+- metteur en scène : les 14 événements s'exécutent sans erreur et se déclenchent tous dans leur contexte ;
 - performances : nombre d'appels de rendu par image.
 
 ## `tests/t-ui-build.mjs` — build de production, vrais clics et vraies touches (18/18)

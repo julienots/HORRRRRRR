@@ -397,6 +397,7 @@ export class Player {
 
   hit(damage, from) {
     const g = this.game;
+    if (this.healing) { this.healing = null; this.locked = false; g.ui.toast('Soins interrompus.'); }
     this.health -= damage;
     this.shake = 1.5;
     this.injury.shock = 1;

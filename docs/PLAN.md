@@ -65,3 +65,15 @@ tests/                tests Playwright automatisés (jeu réellement lancé dans
   Ici tout est procédural : matériaux PBR crédibles, éclairage dynamique et post-traitement,
   mais pas de qualité de scan photogrammétrique. Le pipeline est prêt à recevoir des modèles GLTF.
 - Les performances mesurées en CI sont en rendu logiciel (SwiftShader) et ne représentent pas un vrai GPU.
+
+## 6. Statut (fin de cette itération)
+
+Toutes les étapes 1 à 12 ont été réalisées dans une première version jouable, de bout en bout (6 actes, 3 fins).
+Résultats des tests : voir `docs/TESTS.md` (96 vérifications automatisées, toutes réussies).
+
+Reste à faire / pistes :
+- remplacer les modèles procéduraux par des assets scannés / sculptés (GLTF) pour viser un vrai photoréalisme ;
+- voix enregistrées et bruitages réels à la place de la synthèse ;
+- contrôles tactiles (mobile) ;
+- profilage sur de vraies cartes graphiques (les tests tournent en rendu logiciel) ;
+- physique des tissus (robe) et des cheveux plus poussée, animations faciales plus riches.

@@ -234,16 +234,17 @@ export class Director {
     if (g.act > 4 || d.state !== 'patrol' || d.distToPlayer < 14) return false;
     // a spot 8-13 m away, on the player's level, in his line of sight
     const look = new THREE.Vector3(0, 0, -1).applyQuaternion(g.camera.quaternion).setY(0).normalize();
-    for (let k = 0; k < 12; k++) {
-      const dist = rand(8, 13);
-      const ang = rand(-0.5, 0.5);
-      const dir = look.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), ang);
-      const target = p.pos.clone().addScaledVector(dir, dist);
-      const node = g.nav.nearest(target, 1.5);
-      if (!node || Math.abs(node.y - p.pos.y) > 0.5) continue;
-      const pt = new THREE.Vector3(node.x, node.y + 0.8, node.z);
-      if (g.world.lineBlocked(g.camera.position, pt)) continue;
-      return d.requestStalk(node);
+    // systematic search: farthest first, then closer; centre of the view first, then the sides
+    for (const dist of [13, 12, 11, 10, 9, 8]) {
+      for (const ang of [0, 0.08, -0.08, 0.18, -0.18, 0.3, -0.3, 0.45, -0.45]) {
+        const dir = look.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), ang);
+        const target = p.pos.clone().addScaledVector(dir, dist);
+        const node = g.nav.nearest(target, 0.8);
+        if (!node || Math.abs(node.y - p.pos.y) > 0.5) continue;
+        const pt = new THREE.Vector3(node.x, node.y + 0.8, node.z);
+        if (g.world.lineBlocked(g.camera.position, pt)) continue;
+        if (d.requestStalk(node)) return true;
+      }
     }
     return false;
   }

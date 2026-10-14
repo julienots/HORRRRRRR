@@ -394,8 +394,14 @@ export function buildDoll() {
   const head = attach('head', headGeometry(), headMat, 0, 0.09, 0);
   const inner = attach('head', new THREE.SphereGeometry(0.098, 32, 24), innerMat, 0, 0.09, 0);
   inner.scale.set(0.97, 1.08, 0.95);
-  const hair = attach('head', hairGeometry(), hairMat, 0, 0.09, 0);
-  void hair;
+  // hair hangs from a pivot at the crown so it can follow gravity when the head tilts (see DollAnimator)
+  const hairPivot = new THREE.Group();
+  hairPivot.position.set(0, 0.19, 0);
+  bones.head.add(hairPivot);
+  const hair = new THREE.Mesh(hairGeometry(), hairMat);
+  hair.position.set(0, -0.1, 0);
+  hair.castShadow = true;
+  hairPivot.add(hair);
   // mouth: a dark opening that stretches when the jaw opens (the painted lips stay on the porcelain)
   const mouth = new THREE.Mesh(new THREE.CircleGeometry(0.0078, 20), new THREE.MeshBasicMaterial({ color: 0x030101 }));
   mouth.position.set(0.001, 0.0285, 0.1078);
@@ -479,6 +485,6 @@ export function buildDoll() {
   for (const [k, b] of Object.entries(bones)) rest[k] = b.quaternion.clone();
   return {
     root, bones, skeleton, rest, eyes, materials: { headMat, innerMat, porcelain, dressMat },
-    skirt, head, jaw: bones.jaw, mouth,
+    skirt, head, jaw: bones.jaw, mouth, hairPivot,
   };
 }

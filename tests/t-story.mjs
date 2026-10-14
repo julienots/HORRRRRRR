@@ -249,7 +249,7 @@ const r = await withGame('story', async ({ ev, check, boot, page }) => {
   const fired = Object.entries(dir).filter(([, v]) => v === true).map(([k]) => k);
   const errs = Object.entries(dir).filter(([, v]) => typeof v === 'string');
   check('director: scare events run without errors', errs.length === 0, errs);
-  check('director: most events can fire in their context', fired.length >= 12, { fired: fired.length, dir });
+  check('director: every event fires in its context', fired.length === 14, { fired: fired.length, dir });
 
   // ---------------- performance snapshot (software renderer in CI!)
   const perf = await ev(() => {
