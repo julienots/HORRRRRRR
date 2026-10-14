@@ -493,7 +493,7 @@ export class Doll {
     A.jaw = 0;
     A.tilt = 0;
     A.lookAt = null;
-    A.glow = 0.35;
+    A.glow = 0.45;
     switch (st) {
       case 'dormant':
         A.action = 'sit';
@@ -694,10 +694,12 @@ export class Doll {
       case 'ambush': {
         A.stutter = 0.7;
         if (this.path) { this.followPath(dt); break; }
-        A.action = 'stare';
+        // crouched low in the dark, perfectly still, until she sees you
+        A.action = this.seenByPlayer ? 'stare' : 'search';
         A.eye = this.seeing > 0 ? 'aware' : 'empty';
         A.lookAt = this.ambushLook || null;
         A.tilt = 0.4;
+        A.glow = 0.15;
         if (this.stateT > this.ambushDur) { this.setState('patrol', 'fin d\'embuscade'); this.waitT = 0; }
         break;
       }

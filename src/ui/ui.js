@@ -10,7 +10,10 @@ const ACTION_LABELS = {
   holdBreath: 'Retenir son souffle', throw: 'Lancer une bouteille', inventory: 'Inventaire', journal: 'Journal', heal: 'Se soigner (bandage)',
   objectives: 'Afficher l\'objectif', lock: 'Verrouiller une porte (WC, salle de bain)',
 };
-const keyName = (code) => (code || '—').replace('Key', '').replace('Digit', '').replace('Left', ' G').replace('Right', ' D').replace('Space', 'Espace').replace('Shift', 'Maj').replace('Control', 'Ctrl');
+// shows the real label of the key on the player's layout (AZERTY...) when the browser exposes it
+let layout = null;
+if (navigator.keyboard && navigator.keyboard.getLayoutMap) navigator.keyboard.getLayoutMap().then((m) => { layout = m; }).catch(() => {});
+export const keyName = (code) => (layout && /^(Key|Digit)/.test(code || "") && layout.get(code) ? layout.get(code).toUpperCase() : null) || (code || '—').replace('Key', '').replace('Digit', '').replace('Left', ' G').replace('Right', ' D').replace('Space', 'Espace').replace('Shift', 'Maj').replace('Control', 'Ctrl');
 
 export class UI {
   constructor(game) {

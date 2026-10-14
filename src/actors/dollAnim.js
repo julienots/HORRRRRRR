@@ -198,6 +198,14 @@ export class DollAnimator {
           add(p, 'head', -0.5, 0, 0.15, k);
           p._hipsZ = (p._hipsZ || 0) + 0.12 * k;
           break;
+        case 'scare':
+          // jumpscare: lunging into the camera, hands reaching for the face, head cocked
+          add(p, 'upperArmL', -1.6, 0.2, -0.25, k); add(p, 'upperArmR', -1.55, -0.2, 0.25, k);
+          add(p, 'foreArmL', -0.25, 0, 0, k); add(p, 'foreArmR', -0.3, 0, 0, k);
+          for (const L of ['L', 'R']) for (let f = 0; f < 4; f++) { add(p, `finger${L}${f}a`, 0.2, (f - 1.5) * 0.3, 0, k); add(p, `finger${L}${f}b`, -0.7, 0, 0, k); }
+          add(p, 'spine', 0.2, 0, 0, k);
+          add(p, 'head', 0.1, 0, 0.45 + Math.sin(t * 30) * 0.05, k);
+          break;
         case 'flinch':
           add(p, 'upperArmR', -2.1, 0.3, -0.5, k); add(p, 'foreArmR', -1.7, 0, 0, k);
           add(p, 'upperArmL', -0.3, 0, -0.5, k);

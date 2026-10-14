@@ -4,8 +4,9 @@ import { spawn } from 'node:child_process';
 
 export const CHROME = process.env.CHROME_PATH || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 
-export async function startServer(port = 5199) {
-  const proc = spawn('npx', ['vite', '--port', String(port), '--strictPort', '--host', '127.0.0.1'], { stdio: ['ignore', 'pipe', 'pipe'], detached: true });
+export async function startServer(port = 5199, mode = 'dev') {
+  const args = mode === 'preview' ? ['vite', 'preview', '--port', String(port), '--strictPort', '--host', '127.0.0.1'] : ['vite', '--port', String(port), '--strictPort', '--host', '127.0.0.1'];
+  const proc = spawn('npx', args, { stdio: ['ignore', 'pipe', 'pipe'], detached: true });
   await new Promise((res, rej) => {
     const to = setTimeout(() => rej(new Error('vite did not start')), 30000);
     proc.stdout.on('data', (d) => { if (String(d).includes('Local')) { clearTimeout(to); res(); } });

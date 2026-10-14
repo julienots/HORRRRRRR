@@ -22,10 +22,10 @@ export class LightManager {
       this.pool.push(l);
     }
     // very low ambient so pitch black areas are still slightly readable
-    this.hemi = new THREE.HemisphereLight(0x4a5a78, 0x1a120c, 0.06);
+    this.hemi = new THREE.HemisphereLight(0x52648a, 0x1a120c, 0.11);
     scene.add(this.hemi);
     this.t = 0;
-    this.scale = 4; // candela multiplier (tuned visually)
+    this.scale = 2.3; // candela multiplier (tuned visually)
     this.assignTimer = 0;
     this.assigned = [];
     for (const s of sources) s.current = 0;
@@ -68,7 +68,7 @@ export class LightManager {
       }
       s.current = target;
       if (s.bulbM) {
-        if (s.bulbM.emissiveIntensity !== undefined) s.bulbM.emissiveIntensity = s.kind === 'lantern' ? 0.2 + target * 0.8 : target > 0 ? 1.5 * (target / s.base) : 0;
+        if (s.bulbM.emissiveIntensity !== undefined) s.bulbM.emissiveIntensity = s.kind === 'lantern' ? 0.2 + target * 0.5 : target > 0 ? 0.8 * (target / s.base) : 0;
       }
       if (s.flame) s.flame.visible = target > 0;
     }

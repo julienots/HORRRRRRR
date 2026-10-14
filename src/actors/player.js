@@ -63,7 +63,7 @@ export class Player {
     this.wake = 0;
 
     // flashlight
-    const spot = new THREE.SpotLight(0xfff1d6, 0, 26, 0.48, 0.45, 1.6);
+    const spot = new THREE.SpotLight(0xfff1d6, 0, 26, 0.48, 0.45, 1.5);
     spot.map = flashCookie();
     spot.castShadow = true;
     spot.shadow.mapSize.set(game.quality.flashShadow, game.quality.flashShadow);
@@ -93,10 +93,21 @@ export class Player {
     this.lens.position.z = -0.113;
     this.lens.rotation.y = Math.PI;
     torch.add(this.lens);
-    const hand = new THREE.Mesh(new THREE.SphereGeometry(0.045, 14, 10), new THREE.MeshStandardMaterial({ color: 0x9c7a64, roughness: 0.7 }));
-    hand.scale.set(1, 0.8, 1.5);
-    hand.position.set(0.0, -0.02, 0.03);
-    torch.add(hand);
+    const skin = new THREE.MeshStandardMaterial({ color: 0x6e5242, roughness: 0.75 });
+    const palm = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.035, 0.085), skin);
+    palm.position.set(0.026, -0.006, 0.03);
+    palm.rotation.z = -0.4;
+    torch.add(palm);
+    for (let i = 0; i < 4; i++) {
+      const f = new THREE.Mesh(new THREE.TorusGeometry(0.021, 0.0085, 6, 10, Math.PI * 1.15), skin);
+      f.rotation.set(0, Math.PI / 2, -0.4);
+      f.position.set(0.004, 0.0, 0.0 + i * 0.019 - 0.005);
+      torch.add(f);
+    }
+    const thumb = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.009, 0.045, 6), skin);
+    thumb.rotation.set(Math.PI / 2, 0, 0.3);
+    thumb.position.set(-0.012, 0.022, -0.01);
+    torch.add(thumb);
     const sleeve = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.05, 0.3, 12), new THREE.MeshStandardMaterial({ color: 0x2a2a30, roughness: 0.95 }));
     sleeve.rotation.x = Math.PI / 2 - 0.3;
     sleeve.position.set(0.02, -0.06, 0.2);
@@ -355,14 +366,15 @@ export class Player {
     this._beam.lerp(dir, 1 - Math.exp(-14 * dt)).normalize();
     const wob = new THREE.Vector3(Math.sin(t * 17) * 0.012 * tr, Math.sin(t * 13 + 1) * 0.012 * tr, 0).applyQuaternion(cam.quaternion);
     const beam = this._beam.clone().add(wob).normalize();
+    // the beam starts at the lens, in front of the torch (so the hand is never lit by its own light)
     const origin = cam.position.clone()
-      .add(new THREE.Vector3(0.18, -0.15, -0.2).applyQuaternion(cam.quaternion));
+      .add(new THREE.Vector3(0.22, -0.2, -0.53).applyQuaternion(cam.quaternion));
     this.spot.position.copy(origin);
     this.spotTarget.position.copy(origin).addScaledVector(beam, 5);
-    this.spot.intensity = k * 60 * (0.55 + 0.45 * Math.min(1, this.battery / 40));
+    this.spot.intensity = k * 80 * (0.55 + 0.45 * Math.min(1, this.battery / 40));
     this.fill.position.copy(origin).addScaledVector(beam, 1.2);
     this.fill.intensity = k * 0.5;
-    this.lens.material.color.setScalar(k > 0 ? 1 : 0.13);
+    this.lens.material.color.setScalar(k > 0 ? 0.8 : 0.13);
     // view model
     this.viewModel.visible = this.hasFlashlight && !this.hidden;
     const vm = this.viewModel;

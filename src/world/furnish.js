@@ -138,7 +138,7 @@ export function furnish(levels, world) {
   function candleAt(roomId, x, y, z, h = 0.2) {
     const c = F.candle(h);
     put(roomId, c, x, z, 0, { y, collide: false });
-    const L = light(roomId, x, y + h + 0.05, z, { kind: 'candle', needsPower: false, color: 0xff9a40, intensity: 0.9, range: 4, flicker: 0.35, flame: c.userData.parts.flame });
+    const L = light(roomId, x, y + h + 0.05, z, { kind: 'candle', needsPower: false, color: 0xff9a40, intensity: 1.6, range: 4.5, flicker: 0.35, flame: c.userData.parts.flame });
     c.userData.parts.flame.userData.keep = true;
     content.animated.push({ type: 'flame', mesh: c.userData.parts.flame, light: L });
     return c;
@@ -626,7 +626,7 @@ export function furnish(levels, world) {
     pickup('heart', r, 13.0, 0.92, -8.35);
     pickup('frontKey', r, 13.45, 0.91, -8.2);
     pickup('letter', r, 12.4, 0.91, -8.2, null, { doc: 'last' });
-    const hl = light(r, 13.0, 1.2, -8.2, { kind: 'heart', needsPower: false, intensity: 1.2, range: 4, color: 0xffb020, flicker: 0.2, id: 'heartLight' });
+    const hl = light(r, 13.0, 1.2, -8.2, { kind: 'heart', needsPower: false, intensity: 2.2, range: 4, color: 0xffb020, flicker: 0.2, id: 'heartLight' });
     content.fixtures.heartLight = hl;
     for (let i = 0; i < 9; i++) {
       const a = (i / 9) * PI * 2;

@@ -14,6 +14,7 @@ canvas#game { position: fixed; inset: 0; width: 100%; height: 100%; display: blo
 .hidden { display: none !important; }
 
 /* ---------------- screens */
+.screen#menu, .screen#loading { background: #000; }
 .screen { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--bg); z-index: 20; padding: 16px; }
 .screen.panel { background: rgba(4, 3, 3, 0.94); justify-content: flex-start; padding-top: 6vh; overflow-y: auto; }
 .logo { width: min(560px, 80vw); filter: drop-shadow(0 0 30px rgba(246, 198, 36, 0.12)); }

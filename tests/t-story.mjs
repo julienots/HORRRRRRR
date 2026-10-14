@@ -228,7 +228,7 @@ const r = await withGame('story', async ({ ev, check, boot, page }) => {
     P.calm();
     const out = {};
     const tryEv = (name, setup) => { if (setup) setup(); try { out[name] = g.director.events[name](); } catch (e) { out[name] = 'ERR ' + e.message; } P.run(0.5); };
-    tryEv('doorSlam', () => { S.useDoor('serviceDoor'); P.run(1.5); S.teleport(15.6, 0, 15.5, 0); });
+    tryEv('doorSlam', () => { S.useDoor('serviceDoor'); P.run(1.5); S.teleport(16, 0, 13.5, 0); });
     tryEv('stepsAbove', () => S.teleport(11, 0, 15, 0));
     tryEv('toy', () => S.teleport(4.5, 3, 12.5, Math.PI));
     tryEv('lightOut', () => { g.lights.setPower(true); S.teleport(11, 0, 15, 0); });
@@ -249,7 +249,7 @@ const r = await withGame('story', async ({ ev, check, boot, page }) => {
   const fired = Object.entries(dir).filter(([, v]) => v === true).map(([k]) => k);
   const errs = Object.entries(dir).filter(([, v]) => typeof v === 'string');
   check('director: scare events run without errors', errs.length === 0, errs);
-  check('director: most events can fire in their context', fired.length >= 11, dir);
+  check('director: most events can fire in their context', fired.length >= 12, { fired: fired.length, dir });
 
   // ---------------- performance snapshot (software renderer in CI!)
   const perf = await ev(() => {

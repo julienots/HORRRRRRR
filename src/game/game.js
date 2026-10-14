@@ -17,7 +17,7 @@ import { LEVELS, roomAt, roomById, levelOfY } from '../world/layout.js';
 import { Player } from '../actors/player.js';
 import { Doll } from '../actors/doll.js';
 import { AudioEngine } from '../audio/audio.js';
-import { UI, $ } from '../ui/ui.js';
+import { UI, $, keyName } from '../ui/ui.js';
 import { Director } from './director.js';
 import { ITEMS } from './items.js';
 import { ACTS, OBJECTIVES, DOCUMENTS, SUBTITLES, ENDINGS } from './story.js';
@@ -95,6 +95,15 @@ export class Game {
     const refl = this.content.fixtures.mirror.reflector;
     refl.getReflectionCamera(this.camera).layers.enable(2);
     this.registerDoorsAndWindows();
+    // tell the player why the doll reacts (readable stealth)
+    this.events.on('doll:state', ({ state, reason }) => {
+      if (this.state !== 'playing' || !this.doll.active) return;
+      if ((state === 'investigate' || state === 'suspicious') && this.doll.distToPlayer < 20 && /bruit|lumière|porte|sang|mouvement/.test(reason)) {
+        this.ui.subtitle(`[Elle a remarqué quelque chose : ${reason}]`, 2.5);
+      }
+      if (state === 'bang') this.ui.subtitle('[Elle tambourine contre la porte verrouillée]', 3);
+      if (state === 'checkHide' || (state === 'search' && reason === 'tu t\'es caché sous ses yeux')) this.ui.subtitle('[Elle t\'a vu te cacher]', 2.5);
+    });
     window.addEventListener('resize', () => this.onResize());
     document.addEventListener('keydown', (e) => this.onKey(e));
     document.addEventListener('pointerlockchange', () => {
@@ -234,6 +243,7 @@ export class Game {
     if (this.state === 'loading' || this.state === 'menu') return;
     if (e.code === 'Escape') {
       if (this.ui.readerOpen) { this.ui.closeDoc(); return; }
+      if (this.state === 'playing') { this.pause(); return; }
       if (this.state === 'panel') { this.togglePanel(this.ui.openPanel); return; }
       if (this.state === 'paused') { this.resume(); return; }
     }
@@ -445,6 +455,10 @@ export class Game {
       d.yaw = Math.atan2(-fwd.x, -fwd.z);
       d.setState('attack', 'mise à mort');
       d.syncRoot();
+      // her face lit from below by the golden Essence + your dropped flashlight
+      if (!this.scareLight) { this.scareLight = new THREE.PointLight(0xffb060, 0, 2.5, 2); this.scene.add(this.scareLight); }
+      this.scareLight.position.copy(this.camera.position).addScaledVector(fwd, 0.25).add(new THREE.Vector3(0, -0.35, 0));
+      this.scareLight.intensity = 0.7;
     }
     this.audio.sting();
     this.audio.hurt();
@@ -495,7 +509,7 @@ export class Game {
   }
 
   promptFor(e) {
-    const k = (a) => `<kbd>${(settings.bindings[a] || '').replace('Key', '')}</kbd>`;
+    const k = (a) => `<kbd>${keyName(settings.bindings[a])}</kbd>`;
     const inv = this.inventory, f = this.flags;
     switch (e.kind) {
       case 'door': {
@@ -680,7 +694,7 @@ export class Game {
       return;
     }
     if (d.locked === 'special') return;
-    if (d.lockedInside && !d.forced) { this.ui.toast('Tu l\'as verrouillée. [' + settings.bindings.lock.replace('Key', '') + '] pour déverrouiller.'); return; }
+    if (d.lockedInside && !d.forced) { this.ui.toast('Tu l\'as verrouillée. [' + keyName(settings.bindings.lock) + '] pour déverrouiller.'); return; }
     const open = d.target < 0.5;
     this.openDoor(d, open, this.player.pos);
     // opening quickly while running is louder
@@ -1108,7 +1122,9 @@ export class Game {
     const p = this.player, inp = this.input;
     if (this.state === 'dying') {
       this.dyingT += dt;
-      this.doll.anim.state.action = 'attack';
+      this.doll.anim.state.action = this.deathCause === 'doll' ? 'scare' : 'attack';
+      this.doll.anim.state.stutter = 0;
+      this.doll.anim.state.eye = 'aware';
       this.doll.anim.state.jaw = 1;
       this.doll.anim.state.glow = 2;
       this.doll.anim.state.lookAt = this.camera.position.clone();
@@ -1190,7 +1206,15 @@ export class Game {
     h.shock.value = Math.max(p.injury.shock * 0.8, this.doll.state === 'attack' ? 0.4 : 0);
     h.fade.value = p.wake > 0 ? clamp(p.wake * 1.4 - 0.4, 0, 1) : 0;
     this.lightning = Math.max(0, this.lightning - dt);
-    h.exposure.value = settings.brightness * (1 + (this.lightning > 0.25 ? 1.5 : 0));
+    // eye adaptation: in darkness (no flashlight) the eye slowly opens up so the house stays readable
+    this.adaptT = (this.adaptT || 0) - dt;
+    if (this.adaptT <= 0) {
+      this.adaptT = 0.25;
+      const ll = this.lights.lightLevelAt(this.camera.position, null);
+      this.adaptTarget = p.flashOn ? 1.05 : 1 + 1.1 * (1 - clamp(ll * 2.5, 0, 1)) + (p.hidden ? 0.4 : 0);
+    }
+    this.adapt = damp(this.adapt || 1, this.adaptTarget || 1, this.adaptTarget > (this.adapt || 1) ? 0.5 : 3, dt);
+    h.exposure.value = settings.brightness * this.adapt * (1 + (this.lightning > 0.25 ? 1.5 : 0));
     this.dust.update(dt, this.camera.position, p.spot, p.flashOn);
     const d = this.doll;
     this.audio.update(dt, this.camera, {

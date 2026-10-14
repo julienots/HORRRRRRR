@@ -64,9 +64,9 @@ const HorrorShader = {
       col = mix(col, vec3(0.25, 0.0, 0.0) * (0.6 + 0.4 * sin(time * 3.0)), blood * 0.7);
       // hiding: dark slats view
       if (hidden > 0.0) {
-        float slat = smoothstep(0.35, 0.5, abs(fract(vUv.y * 9.0) - 0.5));
-        float side = smoothstep(0.42, 0.3, abs(c.x));
-        col *= mix(1.0, slat * side, hidden);
+        float slat = 0.35 + 0.65 * smoothstep(0.32, 0.5, abs(fract(vUv.y * 11.0) - 0.5));
+        float side = smoothstep(0.48, 0.3, abs(c.x));
+        col *= mix(1.0, slat * mix(0.25, 1.0, side), hidden);
       }
       // film grain
       float g = hash(vUv * resolution + fract(time * 13.7)) - 0.5;
@@ -101,7 +101,7 @@ export function createComposer(renderer, scene, camera, quality) {
   }
   let bloom = null;
   if (quality.bloom) {
-    bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth / 2, window.innerHeight / 2), 0.55, 0.6, 0.85);
+    bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth / 2, window.innerHeight / 2), 0.32, 0.5, 0.92);
     composer.addPass(bloom);
   }
   const horror = new ShaderPass(HorrorShader);
