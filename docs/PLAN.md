@@ -74,6 +74,5 @@ Résultats des tests : voir `docs/TESTS.md` (96 vérifications automatisées, to
 Reste à faire / pistes :
 - remplacer les modèles procéduraux par des assets scannés / sculptés (GLTF) pour viser un vrai photoréalisme ;
 - voix enregistrées et bruitages réels à la place de la synthèse ;
-- contrôles tactiles (mobile) ;
 - profilage sur de vraies cartes graphiques (les tests tournent en rendu logiciel) ;
 - physique des tissus (robe) et des cheveux plus poussée, animations faciales plus riches.

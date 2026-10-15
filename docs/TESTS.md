@@ -4,7 +4,7 @@ Toutes les suites lancent **le vrai jeu** dans Chromium (Playwright, WebGL 2 en 
 pilotent ses systèmes réels via `window.__SE` (déplacements avec les vraies entrées, vraies interactions,
 vraie IA). Commande : `npm test` (compile le build de production puis exécute les 4 suites).
 
-Dernière exécution complète : **96 vérifications, 96 réussies, 0 échec, aucune erreur JavaScript.**
+Dernière exécution complète : **109 vérifications (5 suites), 109 réussies, 0 échec, aucune erreur JavaScript.**
 
 ## `tests/t-world.mjs` — monde (24/24)
 - nouvelle partie : Acte I, personnage blessé (jambe, bras, saignement) dans la chambre d'amis ;
@@ -56,12 +56,19 @@ Dernière exécution complète : **96 vérifications, 96 réussies, 0 échec, au
 - touches réelles : déplacement, lampe, accroupi, inventaire (ouvrir/fermer), journal, Échap (ferme le journal,
   puis pause) ; sauvegarde depuis le menu pause ; reprise ; rendu d'images.
 
+## `tests/t-touch.mjs` — commandes tactiles sur téléphone émulé (13/13)
+- écran 844×390 avec écran tactile : interface tactile créée, partie lancée en touchant le menu ;
+- vrais `TouchEvent` : le joystick règle l'axe analogique et déplace le joueur, le relâcher arrête tout ;
+- glisser à droite tourne la vue ; boutons Lampe, Accroupi, Souffle (maintenu), Sac, Pause, reprise.
+
 ## Mesures de performance (à interpréter avec prudence)
 Les tests tournent en **rendu logiciel** (pas de GPU) : les temps par image (centaines de ms) ne reflètent pas un
 vrai PC. Seules les mesures indépendantes du GPU sont exploitables :
 - appels de rendu par image (ombres et post-traitement inclus), qualité Moyenne : ~600 dans le hall et la galerie
   (2 niveaux visibles), ~120 au sous-sol ; ~280 000 triangles ;
-- avant optimisation : ~2 450 appels pour la maison seule.
+- avant optimisation : ~2 450 appels pour la maison seule ;
+- essai d'un découpage spatial de la géométrie fusionnée (blocs de 6 m) : −15 % de triangles mais +35 % d'appels
+  (597 → 819 dans le hall) ; mesure défavorable, l'essai a été annulé.
 
 ## Vérifications visuelles
 `tests/shots-game.mjs`, `tests/shot-house.mjs` et `tests/shot-doll.mjs` produisent des captures (dans `tests/out/`)

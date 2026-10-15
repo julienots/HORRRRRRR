@@ -214,8 +214,9 @@ export class Player {
       if (input.is('right')) mx += 1;
       if (input.hit('crouch')) this.toggleCrouch();
     }
-    const moving = mx !== 0 || mz !== 0;
-    const wantSprint = input.is('sprint') && moving && mz < 0 && !this.crouched && !this.exhausted;
+    if (!this.locked) { mx += input.axisX; mz += input.axisY; }
+    const moving = Math.abs(mx) > 0.05 || Math.abs(mz) > 0.05;
+    const wantSprint = (input.is('sprint') || input.axisY < -0.95) && moving && mz < 0 && !this.crouched && !this.exhausted;
     let speed = this.crouched ? 0.95 : 1.7;
     if (wantSprint) speed = 3.7;
     speed *= 1 - this.limp * 0.35;
@@ -231,7 +232,7 @@ export class Player {
     }
     // panic makes movement imprecise
     if (this.fear > 0.7 && moving) mx += Math.sin(g.time * 7.3) * (this.fear - 0.7) * 0.6;
-    const len = Math.hypot(mx, mz) || 1;
+    const len = Math.max(1, Math.hypot(mx, mz)); // analog stick: partial push = slower
     const sin = Math.sin(this.yaw), cos = Math.cos(this.yaw);
     const wx = (mx * cos + mz * sin) / len * speed;
     const wz = (-mx * sin + mz * cos) / len * speed;

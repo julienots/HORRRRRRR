@@ -16,14 +16,14 @@ function ownerRoot(mesh, stop) {
   return null;
 }
 
-function bucketMerge(meshes, space) {
+function bucketMerge(meshes, space, keyFn = null) {
   // space: Object3D whose local frame receives the merged geometry
   const inv = new THREE.Matrix4().copy(space.matrixWorld).invert();
   const buckets = new Map();
   for (const m of meshes) {
     const g = m.geometry;
     const attrs = Object.keys(g.attributes).filter((n) => ['position', 'normal', 'uv', 'color'].includes(n)).sort().join(',');
-    const key = m.material.uuid + '|' + attrs + '|' + m.castShadow + '|' + m.receiveShadow;
+    const key = m.material.uuid + '|' + attrs + '|' + m.castShadow + '|' + m.receiveShadow + (keyFn ? '|' + keyFn(m) : '');
     if (!buckets.has(key)) buckets.set(key, { material: m.material, cast: m.castShadow, receive: m.receiveShadow, geos: [], names: attrs.split(',') });
     const geo = g.index ? g.toNonIndexed() : g.clone();
     geo.applyMatrix4(new THREE.Matrix4().multiplyMatrices(inv, m.matrixWorld));
@@ -76,6 +76,7 @@ export function mergeStatic(levelGroup) {
   let removed = 0, added = 0;
   for (const [root, meshes] of groups) {
     if (root !== levelGroup && meshes.length < 2) continue;
+    // (spatial chunking was measured: fewer triangles but +35 % draw calls, so it is not used)
     const merged = bucketMerge(meshes, root);
     if (!merged.length) continue;
     for (const m of meshes) { m.parent.remove(m); removed++; }

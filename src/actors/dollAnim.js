@@ -94,6 +94,16 @@ export class DollAnimator {
       b.hips.position.y = 0.5 + (pose._hipsY || 0);
       b.hips.position.z = pose._hipsZ || 0;
     }
+    // the dress lags behind the motion and swings with the gait
+    if (this.m.skirt) {
+      const spd = s.loco === 'idle' ? 0 : Math.min(4, s.moved / Math.max(dt, 1e-4));
+      const sx = -spd * 0.05 + Math.sin(this.phase * 2) * 0.025 * Math.min(1, spd);
+      const sz = Math.sin(this.phase) * 0.045 * Math.min(1, spd);
+      for (const [mesh, k] of [[this.m.skirt, 1], [this.m.petticoat, 0.7]]) {
+        mesh.rotation.x = damp(mesh.rotation.x, sx * k, 6, dt);
+        mesh.rotation.z = damp(mesh.rotation.z, sz * k, 6, dt);
+      }
+    }
     // hair follows gravity: counter part of the head's world tilt (keeps the yaw)
     const hp = this.m.hairPivot;
     if (hp) {

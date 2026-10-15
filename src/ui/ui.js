@@ -209,7 +209,8 @@ export class UI {
       $('#progress .fill').style.width = (p.healing.t / p.healing.dur) * 100 + '%';
     } else $('#progress').classList.remove('on');
     const k = settings.bindings;
-    $('#hidehint').innerHTML = p.hidden ? `<kbd>${keyName(k.interact)}</kbd>Sortir &nbsp; <kbd>${keyName(k.holdBreath)}</kbd>Retenir son souffle &nbsp; <kbd>Souris</kbd>Regarder` : '';
+    if (g.input.touch) $('#hidehint').innerHTML = p.hidden ? '<kbd>Agir</kbd>Sortir &nbsp; <kbd>Souffle</kbd>Retenir son souffle' : '';
+    else $('#hidehint').innerHTML = p.hidden ? `<kbd>${keyName(k.interact)}</kbd>Sortir &nbsp; <kbd>${keyName(k.holdBreath)}</kbd>Retenir son souffle &nbsp; <kbd>Souris</kbd>Regarder` : '';
     $('#crosshair').style.display = p.hidden ? 'none' : 'block';
   }
 

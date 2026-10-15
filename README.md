@@ -5,6 +5,7 @@ pendant qu'une poupée de porcelaine animée par « l'Essence » te traque de pi
 
 - Moteur : **Three.js r186** (WebGL 2) + **Vite**, JavaScript (modules ES).
 - Plateforme : **PC, navigateur récent** (Chrome / Edge / Firefox), clavier + souris. Casque recommandé.
+  Tablettes et téléphones (en paysage) : commandes tactiles automatiques (voir plus bas).
 - Tout le contenu (textures PBR, modèles, animations, sons, musique) est **généré procéduralement** dans le code :
   le dépôt était vide au départ, aucun asset tiers n'est utilisé. Seul fichier image : `public/logo.jpg` (logo fourni).
 
@@ -44,6 +45,13 @@ npm run preview      # sert dist/ sur http://127.0.0.1:4173
 | Infos de débogage (état de l'IA, FPS) | F3 |
 
 Sortir d'une cachette en maintenant **C** est plus discret.
+
+Si le navigateur refuse de capturer la souris (page intégrée dans un cadre, politique du navigateur), on regarde
+autour de soi en **maintenant le clic gauche et en faisant glisser**.
+
+**Écran tactile** (détecté automatiquement, ou forcé avec `?touch=1` dans l'adresse) : joystick virtuel à gauche
+pour se déplacer (poussé à fond vers l'avant = courir), glisser sur la moitié droite de l'écran pour regarder,
+boutons Agir, Lampe, Accroupi, Souffle (maintenu), Courir (maintenu), Lancer, Verrou, et en haut Sac, Journal, Pause.
 
 ## Ce qui est dans le jeu
 

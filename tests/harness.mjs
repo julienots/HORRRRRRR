@@ -1,9 +1,9 @@
 // Tiny test harness: named checks with PASS/FAIL, shared browser page running the real game.
 import { startServer, launch } from './util.mjs';
 
-export async function withGame(name, fn, { port = 5190 + Math.floor(Math.random() * 100), w = 960, h = 540, mode = 'dev' } = {}) {
+export async function withGame(name, fn, { port = 5190 + Math.floor(Math.random() * 100), w = 960, h = 540, mode = 'dev', touch = false, query = '' } = {}) {
   const srv = await startServer(port, mode);
-  const { browser, page, errors } = await launch(w, h);
+  const { browser, page, errors } = await launch(w, h, touch);
   const results = [];
   const check = (label, cond, detail = '') => {
     results.push({ label, ok: !!cond, detail });
@@ -16,7 +16,7 @@ export async function withGame(name, fn, { port = 5190 + Math.floor(Math.random(
   };
   let crashed = null;
   try {
-    await boot();
+    await boot(query);
     await fn({ page, ev, check, boot, srv });
   } catch (e) {
     crashed = e;

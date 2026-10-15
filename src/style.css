@@ -105,3 +105,18 @@ button:disabled { opacity: 0.35; cursor: default; }
   .grid { grid-template-columns: 1fr; }
   #objective { max-width: 80vw; font-size: 16px; }
 }
+
+/* ---------------- touch controls */
+#touch { position: absolute; inset: 0; pointer-events: none; }
+#touch #tlook { position: absolute; right: 0; top: 0; width: 60%; height: 100%; pointer-events: auto; touch-action: none; }
+#touch #tstick { position: absolute; left: 28px; bottom: 34px; width: 150px; height: 150px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.18); background: rgba(255, 255, 255, 0.04); pointer-events: auto; touch-action: none; }
+#touch #tstick .knob { position: absolute; left: 50%; top: 50%; width: 60px; height: 60px; margin: -30px; border-radius: 50%; background: rgba(246, 198, 36, 0.22); border: 1px solid rgba(246, 198, 36, 0.5); }
+#touch .tbtns { position: absolute; display: grid; gap: 8px; pointer-events: auto; }
+#touch .tbtns.right { right: 18px; bottom: 26px; grid-template-columns: repeat(2, 76px); }
+#touch .tbtns.top { right: 18px; top: 14px; grid-template-columns: repeat(3, auto); }
+#touch button { padding: 12px 6px; font-size: 14px; text-align: center; background: rgba(10, 8, 7, 0.55); touch-action: none; }
+#touch button.on { border-color: var(--gold); color: var(--gold); }
+body.touch #crosshair { width: 6px; height: 6px; margin: -3px; }
+body.touch #hud { pointer-events: none; }
+body.touch #status { right: 18px; bottom: auto; top: 64px; }
+body.touch #stamina { bottom: 8px; }

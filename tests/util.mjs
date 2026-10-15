@@ -15,12 +15,12 @@ export async function startServer(port = 5199, mode = 'dev') {
   return { url: `http://127.0.0.1:${port}`, stop: () => { try { process.kill(-proc.pid, 'SIGTERM'); } catch { /* already gone */ } } };
 }
 
-export async function launch(w = 1280, h = 720) {
+export async function launch(w = 1280, h = 720, touch = false) {
   const browser = await chromium.launch({
     executablePath: CHROME,
     args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--autoplay-policy=no-user-gesture-required'],
   });
-  const page = await browser.newPage({ viewport: { width: w, height: h } });
+  const page = await browser.newPage({ viewport: { width: w, height: h }, hasTouch: touch, isMobile: touch });
   const errors = [];
   page.on('pageerror', (e) => errors.push(String(e.stack || e)));
   page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });

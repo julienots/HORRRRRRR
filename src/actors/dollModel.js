@@ -387,7 +387,9 @@ export function buildDoll() {
   // skirt (outer, torn) + petticoat ruffles
   const skirt = attach('hips', skirtGeometry(0.36, 0.2, 0.07), dressMat, 0, 0.05, 0);
   const pettiM = new THREE.MeshStandardMaterial({ color: 0xa8a090, side: THREE.DoubleSide, roughness: 1, alphaMap: dress.alpha, alphaTest: 0.5 });
-  attach('hips', skirtGeometry(0.38, 0.17, 0.068), pettiM, 0, 0.045, 0);
+  const petticoat = attach('hips', skirtGeometry(0.38, 0.17, 0.068), pettiM, 0, 0.045, 0);
+  skirt.userData.noMerge = true;
+  petticoat.userData.noMerge = true;
   // neck + head
   attach('neck', new THREE.CylinderGeometry(0.028, 0.032, 0.07, 14), porcelain, 0, 0.02, 0);
   attach('neck', new THREE.SphereGeometry(0.032, 14, 10), jointMat, 0, -0.01, 0);
@@ -485,6 +487,6 @@ export function buildDoll() {
   for (const [k, b] of Object.entries(bones)) rest[k] = b.quaternion.clone();
   return {
     root, bones, skeleton, rest, eyes, materials: { headMat, innerMat, porcelain, dressMat },
-    skirt, head, jaw: bones.jaw, mouth, hairPivot,
+    skirt, petticoat, head, jaw: bones.jaw, mouth, hairPivot,
   };
 }

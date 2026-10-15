@@ -12,7 +12,10 @@ export class Input {
     this.mousePressed = new Set();
     this.locked = false;
     this.enabled = true;
-    this.virtual = new Set(); // for automated tests
+    this.virtual = new Set(); // touch buttons + automated tests
+    this.axisX = 0; // analog stick (touch), -1..1
+    this.axisY = 0;
+    this.touch = false;
     window.addEventListener('keydown', (e) => {
       if (e.code === 'Tab') e.preventDefault();
       if (!this.down.has(e.code)) this.pressed.add(e.code);
@@ -26,10 +29,12 @@ export class Input {
     });
     window.addEventListener('mouseup', (e) => this.mouseDown.delete(e.button));
     window.addEventListener('mousemove', (e) => {
-      if (!this.locked) return;
+      // pointer lock refused (iframe, browser policy): drag with the left button to look around
+      if (!this.locked && !(this.mouseDown.has(0) && this.dragLook)) return;
       this.mouseDX += e.movementX;
       this.mouseDY += e.movementY;
     });
+    document.addEventListener('pointerlockerror', () => { this.dragLook = true; });
     document.addEventListener('pointerlockchange', () => {
       this.locked = document.pointerLockElement === canvas;
     });
@@ -39,8 +44,8 @@ export class Input {
     if (this.canvas.requestPointerLock && !this.locked) {
       try {
         const p = this.canvas.requestPointerLock();
-        if (p && p.catch) p.catch(() => {});
-      } catch { /* not allowed */ }
+        if (p && p.catch) p.catch(() => { this.dragLook = true; });
+      } catch { this.dragLook = true; }
     }
   }
 

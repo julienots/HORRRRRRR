@@ -5,7 +5,7 @@ import { mkdirSync } from 'node:fs';
 mkdirSync('tests/out', { recursive: true });
 const build = spawnSync('npx', ['vite', 'build'], { stdio: 'inherit' });
 if (build.status !== 0) { console.error('build failed'); process.exit(1); }
-const suites = ['t-world.mjs', 't-ai.mjs', 't-story.mjs', 't-ui-build.mjs'];
+const suites = ['t-world.mjs', 't-ai.mjs', 't-story.mjs', 't-ui-build.mjs', 't-touch.mjs'];
 let failed = 0;
 for (const s of suites) {
   console.log(`\n=== ${s} ===`);

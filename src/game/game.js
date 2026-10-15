@@ -18,6 +18,7 @@ import { Player } from '../actors/player.js';
 import { Doll } from '../actors/doll.js';
 import { AudioEngine } from '../audio/audio.js';
 import { UI, $, keyName } from '../ui/ui.js';
+import { setupTouch } from '../ui/touch.js';
 import { Director } from './director.js';
 import { ITEMS } from './items.js';
 import { ACTS, OBJECTIVES, DOCUMENTS, SUBTITLES, ENDINGS } from './story.js';
@@ -109,6 +110,7 @@ export class Game {
     document.addEventListener('pointerlockchange', () => {
       if (!this.input.locked && this.state === 'playing' && !this.testMode) this.pause();
     });
+    setupTouch(this);
     this.applySettings();
     // pre-compile shaders
     this.renderer.compile(this.scene, this.camera);
@@ -202,7 +204,7 @@ export class Game {
     this.ui.show('#menu', false);
     this.ui.show('#hud');
     this.state = 'playing';
-    this.input.requestLock();
+    if (!this.input.touch) this.input.requestLock();
     this.updateObjective(true);
   }
 
@@ -219,7 +221,7 @@ export class Game {
   resume() {
     for (const s of ['#pause', '#options', '#controls', '#inventory', '#journal', '#clicktoplay']) this.ui.show(s, false);
     this.state = 'playing';
-    this.input.requestLock();
+    if (!this.input.touch) this.input.requestLock();
   }
 
   togglePanel(name) {
