@@ -22,6 +22,7 @@ export const DIFFICULTY = {
 };
 
 const defaults = {
+  v: 2,
   // phones / tablets start in low quality (the setting can be raised in Options)
   quality: typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0 && !window.matchMedia?.('(pointer: fine)').matches ? 'low' : 'medium',
   fov: 72,
@@ -30,7 +31,7 @@ const defaults = {
   headBob: 1.0,
   filmGrain: true,
   chromatic: true,
-  brightness: 1.0,
+  brightness: 1.3,
   master: 0.9,
   music: 0.6,
   sfx: 1.0,
@@ -46,6 +47,8 @@ function load() {
     const raw = localStorage.getItem(KEY);
     if (raw) {
       const s = JSON.parse(raw);
+      // v2: the game was too dark; raise old brightness values to the new default once
+      if (!s.v || s.v < 2) { s.brightness = Math.max(s.brightness ?? 0, 1.3); s.v = 2; }
       return { ...defaults, ...s, bindings: { ...DEFAULT_BINDINGS, ...(s.bindings || {}) } };
     }
   } catch { /* storage unavailable */ }

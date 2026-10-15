@@ -22,10 +22,10 @@ export class LightManager {
       this.pool.push(l);
     }
     // very low ambient so pitch black areas are still slightly readable
-    this.hemi = new THREE.HemisphereLight(0x52648a, 0x1a120c, 0.11);
+    this.hemi = new THREE.HemisphereLight(0x6a7ca0, 0x2a2018, 0.75);
     scene.add(this.hemi);
     this.t = 0;
-    this.scale = 2.3; // candela multiplier (tuned visually)
+    this.scale = 3.6; // candela multiplier (tuned visually)
     this.assignTimer = 0;
     this.assigned = [];
     for (const s of sources) s.current = 0;
@@ -48,7 +48,12 @@ export class LightManager {
       if (!s.current || s.current < 0.05) continue;
       const d = s.pos.distanceTo(p);
       if (d > s.range) continue;
-      const k = s.current * Math.pow(1 - d / s.range, 2) / 4;
+      // perception uses the pre-brightening light levels: rendering got brighter for readability,
+      // stealth balance must not change (moonlight / lantern were boosted x2.4 for display only)
+      const perc = s.kind === 'moon' ? 0.42 : s.kind === 'lantern' ? 0.4 : 1;
+      const range = s.kind === 'moon' ? 4.5 : s.kind === 'lantern' ? 5 : s.range;
+      if (d > range) continue;
+      const k = perc * s.current * Math.pow(1 - d / range, 2) / 4;
       if (k < 0.01) continue;
       if (world && world.lineBlocked(s.pos, p, (b) => b.kind !== 'furniture')) continue;
       sum += k;

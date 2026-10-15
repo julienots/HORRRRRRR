@@ -139,7 +139,7 @@ export class Game {
   applySettings(key) {
     const h = this.post?.horror?.uniforms;
     if (h) {
-      h.grain.value = settings.filmGrain ? 0.07 : 0;
+      h.grain.value = settings.filmGrain ? 0.045 : 0;
       h.chroma.value = settings.chromatic ? 1 : 0;
       h.exposure.value = settings.brightness;
     }

@@ -114,7 +114,7 @@ export class UI {
       row('Sensibilité souris', range('sensitivity', 0.2, 3, 0.05)),
       row('Inverser l\'axe Y', check('invertY')),
       row('Mouvements de caméra', range('headBob', 0, 1.5, 0.05)),
-      row('Luminosité', range('brightness', 0.6, 1.8, 0.05)),
+      row('Luminosité', range('brightness', 0.6, 2.5, 0.05)),
       row('Grain de film', check('filmGrain')),
       row('Aberration chromatique', check('chromatic')),
       row('Volume général', range('master', 0, 1, 0.01)),

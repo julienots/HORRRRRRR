@@ -58,7 +58,7 @@ const HorrorShader = {
       // vignette, stronger with fear, heart-beat pulse
       float pulse = fear * 0.08 * (0.5 + 0.5 * sin(time * (6.0 + fear * 6.0)));
       float vig = smoothstep(0.85, 0.25 - pulse - fear * 0.1, r * (vignette + fear * 0.25));
-      col *= mix(0.25, 1.0, vig);
+      col *= mix(0.6, 1.0, vig);
       // blood vignette when wounded
       float blood = smoothstep(0.35, 0.75, r) * damage;
       col = mix(col, vec3(0.25, 0.0, 0.0) * (0.6 + 0.4 * sin(time * 3.0)), blood * 0.7);
@@ -84,7 +84,7 @@ export function createRenderer(canvas, quality) {
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.0;
+  renderer.toneMappingExposure = 1.6;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   return renderer;
 }

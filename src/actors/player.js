@@ -15,9 +15,9 @@ function flashCookie() {
     g.addColorStop(0.18, 'rgba(255,245,225,0.95)');
     g.addColorStop(0.22, 'rgba(200,190,170,0.65)');
     g.addColorStop(0.42, 'rgba(255,240,215,0.75)');
-    g.addColorStop(0.48, 'rgba(120,110,100,0.35)');
-    g.addColorStop(0.75, 'rgba(60,55,50,0.15)');
-    g.addColorStop(1, 'rgba(0,0,0,0)');
+    g.addColorStop(0.5, 'rgba(200,190,175,0.6)');
+    g.addColorStop(0.8, 'rgba(150,140,130,0.4)');
+    g.addColorStop(1, 'rgba(90,85,80,0.25)');
     c.fillStyle = g; c.fillRect(0, 0, W, H);
     // scratches / dirt on the lens
     c.strokeStyle = 'rgba(0,0,0,0.25)';
@@ -63,7 +63,7 @@ export class Player {
     this.wake = 0;
 
     // flashlight
-    const spot = new THREE.SpotLight(0xfff1d6, 0, 26, 0.48, 0.45, 1.5);
+    const spot = new THREE.SpotLight(0xfff1d6, 0, 28, 0.6, 0.5, 1.4);
     spot.map = flashCookie();
     spot.castShadow = true;
     spot.shadow.mapSize.set(game.quality.flashShadow, game.quality.flashShadow);
@@ -76,8 +76,10 @@ export class Player {
     game.scene.add(spot, this.spotTarget);
     spot.target = this.spotTarget;
     // faint fill light around the beam so the player sees their surroundings a little
-    this.fill = new THREE.PointLight(0xffe8c8, 0, 4, 2);
+    this.fill = new THREE.PointLight(0xffe8c8, 0, 5, 2);
     game.scene.add(this.fill);
+    this.eyeLight = new THREE.PointLight(0x9fb0d0, 0, 9, 1.1);
+    game.scene.add(this.eyeLight);
 
     // view model: hand holding the flashlight
     this.viewModel = new THREE.Group();
@@ -372,9 +374,12 @@ export class Player {
       .add(new THREE.Vector3(0.22, -0.2, -0.53).applyQuaternion(cam.quaternion));
     this.spot.position.copy(origin);
     this.spotTarget.position.copy(origin).addScaledVector(beam, 5);
-    this.spot.intensity = k * 80 * (0.55 + 0.45 * Math.min(1, this.battery / 40));
+    this.spot.intensity = k * 150 * (0.55 + 0.45 * Math.min(1, this.battery / 40));
     this.fill.position.copy(origin).addScaledVector(beam, 1.2);
-    this.fill.intensity = k * 0.5;
+    this.fill.intensity = k * 1.2;
+    // soft light around the player (eyes used to the dark): keeps the surroundings readable without the torch
+    this.eyeLight.position.copy(cam.position);
+    this.eyeLight.intensity = 1.7;
     this.lens.material.color.setScalar(k > 0 ? 0.8 : 0.13);
     // view model
     this.viewModel.visible = this.hasFlashlight && !this.hidden;

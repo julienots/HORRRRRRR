@@ -214,7 +214,7 @@ export function furnish(levels, world) {
     lan.add(glow);
     F.C(lan, 0.06, 0.05, 0.03, 'metal', 0, 0.18, 0, 12);
     put(r, lan, 22.4, 11.3, 0, { y: lanternY, collide: false });
-    light(r, 22.4, lanternY + 0.25, 11.4, { kind: 'lantern', needsPower: false, intensity: 1.4, range: 5, flicker: 0.5, color: 0xffc080, bulbM: glow.material, id: 'guestLantern' });
+    light(r, 22.4, lanternY + 0.25, 11.4, { kind: 'lantern', needsPower: false, intensity: 3.5, range: 7, flicker: 0.35, color: 0xffc080, bulbM: glow.material, id: 'guestLantern' });
     atWall(r, 'E', 16.6, F.wardrobe(1.1, 2.1, 0.6), { hideId: 'hide_guest_wardrobe' });
     const dr = atWall(r, 'S', 18.6, F.dresser(1.1));
     pickup('bandage', r, 18.4, 0.93, 17.6);
@@ -653,7 +653,7 @@ export function furnish(levels, world) {
     const inward = o.axis === 'z' ? (Math.abs(room.rect[1] - o.at) < 0.01 ? 1 : -1) : (Math.abs(room.rect[0] - o.at) < 0.01 ? 1 : -1);
     const x = o.axis === 'z' ? o.c : o.at + inward * 0.6;
     const z = o.axis === 'z' ? o.at + inward * 0.6 : o.c;
-    light(room.id, x, 1.6, z, { kind: 'moon', needsPower: false, intensity: 0.5, color: 0x6f8fc0, range: 4.5 });
+    light(room.id, x, 1.6, z, { kind: 'moon', needsPower: false, intensity: 1.2, color: 0x7f9cd0, range: 5.5 });
   }
 
   // ------------------------------------------------------------ light switches next to each room's first door
