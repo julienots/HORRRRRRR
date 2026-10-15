@@ -25,6 +25,23 @@ npm run preview      # sert dist/ sur http://127.0.0.1:4173
 
 `dist/` peut être déposé sur n'importe quel hébergement statique. Il doit être servi en HTTP (pas en `file://`).
 
+## Application Android (APK)
+
+```bash
+npm run apk          # = scripts/build-apk.sh -> release/SuperEssence-TheDoll.apk
+```
+
+Prérequis : Node, JDK 17+, SDK Android (plateforme 34, build-tools 34) via `ANDROID_HOME` ou
+`android/local.properties`. Le projet `android/` est une application Java minimale, sans dépendance externe :
+une WebView plein écran en paysage qui sert le jeu compilé depuis les assets de l'APK
+(`https://appassets.androidplatform.net/assets/www/`), avec l'écran maintenu allumé, la pause automatique quand
+l'application passe en arrière-plan et le bouton Retour qui agit comme Échap. Android 8.0 minimum, cible Android 14.
+Sur téléphone, le jeu démarre en qualité Basse avec les commandes tactiles (modifiable dans Options).
+
+Signature : au premier build, le script crée `android/keystore/release.jks` (hors git, mot de passe par défaut
+`superessence` ou `SE_KEYSTORE_PASSWORD`). **Garde ce fichier** : les mises à jour de l'application doivent être
+signées avec la même clé. Pour installer l'APK, autorise l'installation d'applications de sources inconnues.
+
 ## Commandes (modifiables dans Options → Commandes)
 
 | Action | Touche |

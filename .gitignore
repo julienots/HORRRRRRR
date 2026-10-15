@@ -2,3 +2,10 @@ node_modules/
 dist/
 tests/out/
 *.log
+android/local.properties
+android/keystore/
+android/.gradle/
+android/app/build/
+android/build/
+android/app/src/main/assets/www/
+release/

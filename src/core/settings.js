@@ -22,7 +22,8 @@ export const DIFFICULTY = {
 };
 
 const defaults = {
-  quality: 'medium',
+  // phones / tablets start in low quality (the setting can be raised in Options)
+  quality: typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0 && !window.matchMedia?.('(pointer: fine)').matches ? 'low' : 'medium',
   fov: 72,
   sensitivity: 1.0,
   invertY: false,

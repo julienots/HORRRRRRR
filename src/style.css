@@ -120,3 +120,18 @@ body.touch #crosshair { width: 6px; height: 6px; margin: -3px; }
 body.touch #hud { pointer-events: none; }
 body.touch #status { right: 18px; bottom: auto; top: 64px; }
 body.touch #stamina { bottom: 8px; }
+
+/* short landscape screens (phones) */
+.screen { overflow-y: auto; }
+@media (max-height: 520px) {
+  .screen { justify-content: flex-start; padding-top: 10px; }
+  .logo { width: min(300px, 60vw); }
+  .sub { margin: 0 0 12px 1.2em; font-size: 13px; }
+  .title { font-size: 26px; margin-bottom: 10px; }
+  button { padding: 7px 14px; font-size: 16px; }
+  .buttons { gap: 5px; }
+  .foot, .note { margin-top: 8px; font-size: 14px; }
+  .screen.panel { padding-top: 10px; }
+  #reader .paper { max-height: 80vh; padding: 16px 20px; font-size: 14px; }
+  .endtext { font-size: 16px; }
+}

@@ -1,0 +1,45 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.superessence.thedoll'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'com.superessence.thedoll'
+        minSdk 26
+        targetSdk 34
+        versionCode 1
+        versionName '1.0.0'
+    }
+
+    signingConfigs {
+        release {
+            // keystore created by scripts/build-apk.sh (never committed); falls back to the debug key
+            def ks = file('../keystore/release.jks')
+            if (ks.exists()) {
+                storeFile ks
+                storePassword System.getenv('SE_KEYSTORE_PASSWORD') ?: 'superessence'
+                keyAlias 'superessence'
+                keyPassword System.getenv('SE_KEYSTORE_PASSWORD') ?: 'superessence'
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig file('../keystore/release.jks').exists() ? signingConfigs.release : signingConfigs.debug
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    // the game files are not compressed so the WebView can stream them quickly
+    androidResources { noCompress += ['js', 'css', 'html', 'jpg'] }
+}
+
+// no external dependency: the game files are served by MainActivity itself
